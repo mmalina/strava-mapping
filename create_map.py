@@ -47,6 +47,8 @@ def get_api_token():
 
 def main():
     load_dotenv()  # Load env vars from .env for development
+    client_id = os.environ["STRAVA_API_CLIENT_ID"]
+    client_secret = os.environ["STRAVA_API_CLIENT_SECRET"]
 
     br = mechanize.Browser()
     cj = load_cookiejar()
@@ -59,7 +61,7 @@ def main():
 
     get_params = {
         "response_type": "code",
-        "client_id": os.environ["STRAVA_API_CLIENT_ID"],
+        "client_id": client_id,
         "redirect_uri": "http://localhost/oauth-redirect",
         "scope": "activity:read"
     }
@@ -76,9 +78,25 @@ def main():
         allow_redirects=False
     )
 
-    print(response.status_code)
-    print(response.headers["Location"])
+    loc = response.headers["Location"]
+    query = urllib.parse.urlparse(loc).query
+    params = urllib.parse.parse_qs(query)
+    code = params["code"][0]
+    data = {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "code": code,
+        "grant_type": "authorization_code"
+    }
+    response = requests.post("https://www.strava.com/oauth/token", data=data)
+    values = response.json()
+    refresh_token = values["refresh_token"]
+    access_token = values["access_token"]
 
+    headers = {"Authorization": f"Bearer {access_token}"}
+    data = {"before": 1617256800}
+    response = requests.get("https://www.strava.com/api/v3/athlete/activities", headers=headers, data=data)
+    print(response.text)
     api_token = get_api_token()
 
 
