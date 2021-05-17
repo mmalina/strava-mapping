@@ -97,7 +97,8 @@ def main():
             f"<b>{activity['name']}</b><br>\n"
             f"Distance: {round(activity['distance']/1000, 1)} km<br>\n"
             f"Elevation gain: {activity['total_elevation_gain']} m<br>\n"
-            f"<a href='https://www.strava.com/activities/{activity['id']}'>View on Strava</a>"
+            f"<a href='https://www.strava.com/activities/{activity['id']}'>"
+            "View on Strava</a>"
         )
         popup = folium.map.Popup(html=popup_text)
         folium.Marker(location=points[-1], popup=popup).add_to(the_map)
