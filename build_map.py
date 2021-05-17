@@ -86,7 +86,8 @@ def main():
 
     activities = get_activities(access_token)
 
-    the_map = folium.Map(tiles="Stamen Terrain")
+    the_map = folium.Map()
+    folium.TileLayer("Stamen Terrain", detect_retina=True).add_to(the_map)
     for count, activity in enumerate(activities):
         polyline_str = activity["map"]["summary_polyline"]
 
