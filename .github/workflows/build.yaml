@@ -39,5 +39,5 @@ jobs:
     - name: Archive map.html
       uses: actions/upload-artifact@v2
       with:
-          name: map
+          name: map.html
           path: map.html
