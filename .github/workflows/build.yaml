@@ -31,3 +31,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Build map
       run: ./build_map.py
+      env:
+        STRAVA_EMAIL: ${{ secrets.STRAVA_EMAIL }}
+        STRAVA_PASSWORD: ${{ secrets.STRAVA_PASSWORD }}
+        STRAVA_API_CLIENT_ID: ${{ secrets.STRAVA_API_CLIENT_ID }}
+        STRAVA_API_CLIENT_SECRET: ${{ secrets.STRAVA_API_CLIENT_SECRET }}
