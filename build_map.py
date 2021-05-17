@@ -89,16 +89,17 @@ def main():
     the_map = folium.Map(tiles="Stamen Terrain")
     for count, activity in enumerate(activities):
         polyline_str = activity["map"]["summary_polyline"]
+
         if not polyline_str:
             continue
         points = decode_polyline(activity["map"]["summary_polyline"])
         folium.PolyLine(points, color="red").add_to(the_map)
         popup_text = (
-            f"<b>{activity['name']}</b><br>\n"
+            f"<div style='width: 15em'><b>{activity['name']}</b><br><br>\n"
             f"Distance: {round(activity['distance']/1000, 1)} km<br>\n"
-            f"Elevation gain: {activity['total_elevation_gain']} m<br>\n"
+            f"Elevation gain: {round(activity['total_elevation_gain'])} m<br><br>\n"
             f"<a href='https://www.strava.com/activities/{activity['id']}'>"
-            "View on Strava</a>"
+            "View on Strava</a></div>"
         )
         popup = folium.map.Popup(html=popup_text)
         folium.Marker(location=points[-1], popup=popup).add_to(the_map)
