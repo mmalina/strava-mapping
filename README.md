@@ -12,7 +12,7 @@ on my website.
 
 ## The Workflow
 
-To see the full workflow, check [.github/workflows/build.yaml](.github/workflows/build.yaml)
+To see the full workflow, check [.github/workflows/build.yaml](.github/workflows/build.yaml). Currently it's triggered manually. The goal is to use Strava webhooks to trigger a new workflow run.
 
 Here are the main steps:
 
