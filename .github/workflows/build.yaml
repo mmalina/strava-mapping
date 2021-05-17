@@ -3,9 +3,7 @@
 
 name: Build map
 
-on:
-  - workflow_dispatch
-  - repository_dispatch
+on: workflow_dispatch
 
 # We only want one workflow running at a time.
 # This feature is in Beta and might change/break any time
