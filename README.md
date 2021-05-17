@@ -23,3 +23,14 @@ Here are the main steps:
 5. Deploy the html file to a web server
 
 This is the resulting page with the map: http://map.anyberry.net (currently the dates are set to my trip to Switzerland from 2019 for testing)
+
+## Strava API access caveats
+
+First thing that is required is an app created in Strava. This can easily be done at https://www.strava.com/settings/api .
+But then the user needs to authorize the app to access his or her data. This is done via a form on a webpage (via oath).
+Once the logged in user confirms the form, they would be redirected to a page the app provides. The request contains
+a code that can be exchanged for a short-lived access_token and a refresh_token. The access_token is only valid for
+6 hours after which you need to obtain a new one using the refresh_token (which will also give you a new refresh_token).
+If I wanted to authorize once and then only use the tokens, I would need to persist the token somewhere (Github
+doesn't provide any sort of secret store to save data to). So I needed to automate the app authorization step.
+Once I had that, I was able to obtain the access_token and call Strava API as needed.
