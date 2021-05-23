@@ -18,8 +18,8 @@ UNTIL = "2019-07-14"
 # UNTIL = "2018-02-15"
 
 # Canary Islands 2021
-# SINCE = "2021-02-26"
-# UNTIL = "2021-04-19"
+SINCE = "2021-02-26"
+UNTIL = "2021-04-19"
 
 
 def decode_polyline(polyline_str):
@@ -103,6 +103,7 @@ def main():
             "View on Strava</a></div>"
         )
         popup = folium.map.Popup(html=popup_text)
+        # folium.Marker(location=points[len(points)//2], popup=popup).add_to(the_map)
         folium.Marker(location=points[-1], popup=popup).add_to(the_map)
     boundary = the_map.get_bounds()
     the_map.fit_bounds(boundary, padding=(3, 3))
