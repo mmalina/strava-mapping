@@ -102,7 +102,7 @@ def main():
 
     activities = get_activities(access_token)
 
-    the_map = folium.Map(tiles=None)
+    the_map = folium.Map(tiles=None, control_scale=True)
     folium.TileLayer("Stamen Terrain", detect_retina=True).add_to(the_map)
     folium.TileLayer("OpenStreetMap", detect_retina=True).add_to(the_map)
     fg = folium.FeatureGroup(name="Show Photos", show=False)
