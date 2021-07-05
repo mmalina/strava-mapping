@@ -138,6 +138,7 @@ def main():
     folium.Marker(
         location=(46.49811030370744, 9.846421184253723),
         icon=folium.Icon(icon="train", prefix="fa"),
+        popup="St. Moritz Railway Station",
     ).add_to(the_map)
     count = 0
     for activity in activities:
