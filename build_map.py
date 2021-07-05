@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
+"""Build folium map from Strava activities using Strava API
+
+User activities are loaded from newest to oldest. They are paged by 20 items.
+For each activity there are extra 2 api requests to get photos. The api rate limit
+is 100 requests per 15 minutes. This means 48 is the maximum amount of activities
+that can be loaded at once.
+
+The date boundaries for activities are set either via SINCE/UNTIL constants
+here in the script or via env vars (which will override SINCE/UNTIL):
+BUILD_MAP_SINCE
+BUILD_MAP_UNTIL
+"""
 from datetime import datetime
+import os
 import requests
 import folium
 
@@ -64,9 +77,17 @@ def decode_polyline(polyline_str):
 def get_activities(access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
     data = {"per_page": 20}
-    if SINCE:
+    if "BUILD_MAP_SINCE" in os.environ:
+        data["after"] = datetime.fromisoformat(
+            os.environ["BUILD_MAP_SINCE"]
+        ).timestamp()
+    elif SINCE:
         data["after"] = datetime.fromisoformat(SINCE).timestamp()
-    if UNTIL:
+    if "BUILD_MAP_UNTIL" in os.environ:
+        data["before"] = datetime.fromisoformat(
+            os.environ["BUILD_MAP_UNTIL"]
+        ).timestamp()
+    elif UNTIL:
         data["before"] = datetime.fromisoformat(UNTIL).timestamp()
     data["page"] = 1
     while True:
