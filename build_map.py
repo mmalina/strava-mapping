@@ -93,7 +93,11 @@ def get_activity_photos(access_token, activity_id, size=None):
         headers=headers,
         data=data,
     )
-    response.raise_for_status()
+    if response.status_code != requests.codes.ok:
+        print("Failed to get photos, skipping...")
+        print(f"Status code: {response.status_code}")
+        print(f"Response: {response.text}")
+        return []
     return response.json()
 
 
@@ -128,7 +132,8 @@ def main():
         size = "400"
         photos_thumb = get_activity_photos(access_token, activity["id"])
         photos_large = get_activity_photos(access_token, activity["id"], size=size)
-        for photo in range(len(photos_thumb)):
+        # If we fail to get either thumbs or large photos, just skip the photos
+        for photo in range(min(len(photos_thumb), len(photos_large))):
             if "location" not in photos_thumb[photo]:
                 continue
             icon = folium.CustomIcon(
