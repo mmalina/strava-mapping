@@ -12,6 +12,7 @@ here at the top of the script.
 from datetime import datetime
 import requests
 import folium
+from folium.plugins import Fullscreen
 
 from get_access_token import get_access_token
 
@@ -20,8 +21,8 @@ from get_access_token import get_access_token
 # UNTIL = "2020-06-22"
 
 # Switzerland 2019
-# SINCE = "2019-06-29"
-# UNTIL = "2019-07-14"
+SINCE = "2019-06-29"
+UNTIL = "2019-07-14"
 # UNTIL = "2019-07-05"
 
 # NZ 2017/2018
@@ -34,9 +35,9 @@ from get_access_token import get_access_token
 # UNTIL = "2021-04-19"
 
 # Switzerland 2021
-SINCE = "2021-06-27"
-SINCE = "2021-07-17"
-UNTIL = "2021-08-08"
+# SINCE = "2021-06-27"
+# SINCE = "2021-07-17"
+# UNTIL = "2021-08-08"
 
 
 def decode_polyline(polyline_str):
@@ -132,6 +133,7 @@ def main():
     fg = folium.FeatureGroup(name="Show Photos", show=False)
     the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
+    Fullscreen().add_to(the_map)
     # Railway station in St. Moritz
     folium.Marker(
         location=(46.49811030370744, 9.846421184253723),
