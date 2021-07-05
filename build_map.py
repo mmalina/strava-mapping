@@ -36,7 +36,6 @@ from get_access_token import get_access_token
 # Switzerland 2021
 SINCE = "2021-06-27"
 SINCE = "2021-07-17"
-SINCE = "2021-07-04"
 UNTIL = "2021-08-08"
 
 
@@ -133,6 +132,11 @@ def main():
     fg = folium.FeatureGroup(name="Show Photos", show=False)
     the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
+    # Railway station in St. Moritz
+    folium.Marker(
+        location=(46.49811030370744, 9.846421184253723),
+        icon=folium.Icon(icon="train", prefix="fa"),
+    ).add_to(the_map)
     count = 0
     for activity in activities:
         polyline_str = activity["map"]["summary_polyline"]
@@ -171,7 +175,7 @@ def main():
         count += 1
 
     boundary = the_map.get_bounds()
-    the_map.fit_bounds(boundary, padding=(3, 3))
+    the_map.fit_bounds(boundary, padding=(3, 3), max_zoom=13)
     the_map.save("map.html")
     print(f"Total activities: {count}")
 
