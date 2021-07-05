@@ -6,13 +6,10 @@ For each activity there are extra 2 api requests to get photos. The api rate lim
 is 100 requests per 15 minutes. This means 48 is the maximum amount of activities
 that can be loaded at once.
 
-The date boundaries for activities are set either via SINCE/UNTIL constants
-here in the script or via env vars (which will override SINCE/UNTIL):
-BUILD_MAP_SINCE
-BUILD_MAP_UNTIL
+The date boundaries for activities are set via SINCE/UNTIL constants
+here at the top of the script.
 """
 from datetime import datetime
-import os
 import requests
 import folium
 
@@ -23,9 +20,9 @@ from get_access_token import get_access_token
 # UNTIL = "2020-06-22"
 
 # Switzerland 2019
-SINCE = "2019-06-29"
-UNTIL = "2019-07-14"
-UNTIL = "2019-07-05"
+# SINCE = "2019-06-29"
+# UNTIL = "2019-07-14"
+# UNTIL = "2019-07-05"
 
 # NZ 2017/2018
 # SINCE = "2017-12-04"
@@ -35,6 +32,12 @@ UNTIL = "2019-07-05"
 # SINCE = "2021-02-26"
 # SINCE = "2021-04-09"
 # UNTIL = "2021-04-19"
+
+# Switzerland 2021
+SINCE = "2021-06-27"
+SINCE = "2021-07-17"
+SINCE = "2021-07-04"
+UNTIL = "2021-08-08"
 
 
 def decode_polyline(polyline_str):
@@ -77,17 +80,9 @@ def decode_polyline(polyline_str):
 def get_activities(access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
     data = {"per_page": 20}
-    if "BUILD_MAP_SINCE" in os.environ:
-        data["after"] = datetime.fromisoformat(
-            os.environ["BUILD_MAP_SINCE"]
-        ).timestamp()
-    elif SINCE:
+    if SINCE:
         data["after"] = datetime.fromisoformat(SINCE).timestamp()
-    if "BUILD_MAP_UNTIL" in os.environ:
-        data["before"] = datetime.fromisoformat(
-            os.environ["BUILD_MAP_UNTIL"]
-        ).timestamp()
-    elif UNTIL:
+    if UNTIL:
         data["before"] = datetime.fromisoformat(UNTIL).timestamp()
     data["page"] = 1
     while True:
@@ -96,6 +91,11 @@ def get_activities(access_token):
             headers=headers,
             data=data,
         )
+        if response.status_code != requests.codes.ok:
+            print("Failed to get activities")
+            print(f"Status code: {response.status_code}")
+            print(f"Response: {response.text}")
+            break
         activities = response.json()
         if activities:
             data["page"] += 1
@@ -133,7 +133,8 @@ def main():
     fg = folium.FeatureGroup(name="Show Photos", show=False)
     the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
-    for count, activity in enumerate(activities):
+    count = 0
+    for activity in activities:
         polyline_str = activity["map"]["summary_polyline"]
 
         if not polyline_str:
@@ -167,11 +168,12 @@ def main():
             folium.Marker(
                 location=photos_thumb[photo]["location"], icon=icon, popup=popup
             ).add_to(the_map).add_to(fg)
+        count += 1
 
     boundary = the_map.get_bounds()
     the_map.fit_bounds(boundary, padding=(3, 3))
     the_map.save("map.html")
-    print(f"Total activities: {count+1}")
+    print(f"Total activities: {count}")
 
 
 if __name__ == "__main__":

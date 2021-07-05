@@ -41,8 +41,6 @@ jobs:
         STRAVA_PASSWORD: ${{ secrets.STRAVA_PASSWORD }}
         STRAVA_API_CLIENT_ID: ${{ secrets.STRAVA_API_CLIENT_ID }}
         STRAVA_API_CLIENT_SECRET: ${{ secrets.STRAVA_API_CLIENT_SECRET }}
-        BUILD_MAP_SINCE: ${{ secrets.BUILD_MAP_SINCE }}
-        BUILD_MAP_UNTIL: ${{ secrets.BUILD_MAP_UNTIL }}
     - name: Deploy map to FTP server
       run: sshpass -p "${SFTP_PASSWORD}" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null map.html "${SFTP_USERNAME}@${SFTP_HOST}:./index.html"
       env:
