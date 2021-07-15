@@ -21,8 +21,8 @@ from get_access_token import get_access_token
 # UNTIL = "2020-06-22"
 
 # Switzerland 2019
-SINCE = "2019-06-29"
-UNTIL = "2019-07-14"
+# SINCE = "2019-06-29"
+# UNTIL = "2019-07-14"
 # UNTIL = "2019-07-05"
 
 # NZ 2017/2018
@@ -36,8 +36,8 @@ UNTIL = "2019-07-14"
 
 # Switzerland 2021
 # SINCE = "2021-06-27"
-# SINCE = "2021-07-17"
-# UNTIL = "2021-08-08"
+SINCE = "2021-07-16"
+UNTIL = "2021-08-08"
 
 
 def decode_polyline(polyline_str):
