@@ -12,7 +12,7 @@ on my website.
 
 ## The Workflow
 
-To see the full workflow, check [.github/workflows/build.yaml](.github/workflows/build.yaml). Currently it's triggered manually. The goal is to use Strava webhooks to trigger a new workflow run.
+To see the full workflow, check [.github/workflows/build.yaml](.github/workflows/build.yaml). The workflow is triggered manually. There is an API for that and I have a shortcut set up in iOS Shortcuts app, so it's a matter of one click for me. It would be nice to be able to use Strava webhooks to trigger a new workflow run automatically for new activities. But for that I would need to create a service that would glue together Strava subscriptions and Github webhooks.
 
 Here are the main steps:
 
@@ -22,7 +22,7 @@ Here are the main steps:
 4. Save map to a html file
 5. Deploy the html file to a web server
 
-This is the resulting page with the map: http://map.anyberry.net (currently the dates are set to my trip to Switzerland from 2019 for testing)
+This is the resulting page with the map: http://map.anyberry.net (currently the dates are set to my latest trip to the Alps)
 
 ## Strava API access caveats
 
