@@ -16,6 +16,9 @@ from folium.plugins import Fullscreen
 
 from get_access_token import get_access_token
 
+SINCE = "2021-11-21"
+UNTIL = "2021-12-04"
+
 # Slovenia
 # SINCE = "2020-06-12"
 # UNTIL = "2020-06-22"
@@ -36,8 +39,12 @@ from get_access_token import get_access_token
 
 # Switzerland 2021
 # SINCE = "2021-06-27"
-SINCE = "2021-07-16"
-UNTIL = "2021-08-08"
+# SINCE = "2021-07-16"
+# UNTIL = "2021-08-08"
+
+# Fuerteventura Fall 2021
+SINCE = "2021-10-25"
+UNTIL = "2021-11-06"
 
 
 def decode_polyline(polyline_str):
@@ -134,12 +141,6 @@ def main():
     the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
-    # Railway station in St. Moritz
-    folium.Marker(
-        location=(46.49811030370744, 9.846421184253723),
-        icon=folium.Icon(icon="train", prefix="fa"),
-        popup="St. Moritz Railway Station",
-    ).add_to(the_map)
     count = 0
     for activity in activities:
         polyline_str = activity["map"]["summary_polyline"]
