@@ -43,8 +43,8 @@ UNTIL = "2021-12-04"
 # UNTIL = "2021-08-08"
 
 # Fuerteventura Fall 2021
-SINCE = "2021-10-25"
-UNTIL = "2021-11-06"
+# SINCE = "2021-10-25"
+# UNTIL = "2021-11-06"
 
 
 def decode_polyline(polyline_str):
