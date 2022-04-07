@@ -17,6 +17,8 @@ from math import sin, cos, sqrt, atan2, radians
 
 from get_access_token import get_access_token
 
+ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
+
 SINCE = "2021-11-21"
 UNTIL = "2021-12-04"
 
@@ -87,26 +89,29 @@ def decode_polyline(polyline_str):
 
 def get_activities(access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
-    data = {"per_page": 20}
+    payload = {"per_page": 20}
     if SINCE:
-        data["after"] = datetime.fromisoformat(SINCE).timestamp()
+        payload["after"] = datetime.fromisoformat(SINCE).timestamp()
     if UNTIL:
-        data["before"] = datetime.fromisoformat(UNTIL).timestamp()
-    data["page"] = 1
+        payload["before"] = datetime.fromisoformat(UNTIL).timestamp()
+    payload["page"] = 1
     while True:
         response = requests.get(
-            "https://www.strava.com/api/v3/athlete/activities",
+            ACTIVITIES_ENDPOINT,
             headers=headers,
-            data=data,
+            params=payload,
         )
         if response.status_code != requests.codes.ok:
             print("Failed to get activities")
+            print(f"Request url: {ACTIVITIES_ENDPOINT}")
+            print(f"Request headers: {headers}")
+            print(f"Request payload: {payload}")
             print(f"Status code: {response.status_code}")
             print(f"Response: {response.text}")
             break
         activities = response.json()
         if activities:
-            data["page"] += 1
+            payload["page"] += 1
             yield from activities
         else:
             break
@@ -114,13 +119,13 @@ def get_activities(access_token):
 
 def get_activity_photos(access_token, activity_id, size=None):
     headers = {"Authorization": f"Bearer {access_token}"}
-    data = {"photo_sources": True}
+    payload = {"photo_sources": True}
     if size is not None:
-        data["size"] = size
+        payload["size"] = size
     response = requests.get(
         f"https://www.strava.com/api/v3/activities/{activity_id}/photos",
         headers=headers,
-        data=data,
+        params=payload,
     )
     if response.status_code != requests.codes.ok:
         print("Failed to get photos, skipping...")
