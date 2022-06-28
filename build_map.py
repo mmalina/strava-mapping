@@ -19,9 +19,13 @@ from get_access_token import get_access_token
 
 ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 
+# France 2022
+SINCE = "2022-07-01"
+UNTIL = "2022-07-11"
+
 # Scotland 2022
-SINCE = "2022-04-14"
-UNTIL = "2022-04-24"
+# SINCE = "2022-04-14"
+# UNTIL = "2022-04-24"
 
 # Nepal 2021
 # SINCE = "2021-11-21"
@@ -184,13 +188,6 @@ def main():
     the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
-
-    # West Highland Way, Start
-    folium.Marker(
-         location=(55.941644236072364, -4.317817318981492),
-         icon=folium.Icon(icon="play", prefix="fa"),
-         popup="West Highland Way, Start",
-     ).add_to(the_map)
 
     count = 0
     marker_locations = []
