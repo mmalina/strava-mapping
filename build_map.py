@@ -18,6 +18,8 @@ from math import sin, cos, sqrt, atan2, radians
 from get_access_token import get_access_token
 
 ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
+PHOTO_THUMB_SIZE = "64"
+PHOTO_LARGE_SIZE = "400"
 
 # Scotland Fall 2022
 SINCE = "2022-09-26"
@@ -200,7 +202,6 @@ def main():
         popup="Fort William",
     ).add_to(the_map)
 
-    fg = None
     count = 0
     marker_locations = []
     for activity in activities:
@@ -226,19 +227,18 @@ def main():
             marker_loc = points[len(points)//2]
         folium.Marker(location=marker_loc, popup=popup).add_to(the_map)
         marker_locations.append(marker_loc)
-        size = "400"
-        photos_thumb = get_activity_photos(access_token, activity["id"])
-        photos_large = get_activity_photos(access_token, activity["id"], size=size)
+        photos_thumb = get_activity_photos(access_token, activity["id"], size=PHOTO_THUMB_SIZE)
+        photos_large = get_activity_photos(access_token, activity["id"], size=PHOTO_LARGE_SIZE)
         # If we fail to get either thumbs or large photos, just skip the photos
         for photo in range(min(len(photos_thumb), len(photos_large))):
             if "location" not in photos_thumb[photo]:
                 continue
             icon = folium.CustomIcon(
-                photos_thumb[photo]["urls"]["0"],
-                icon_size=photos_thumb[photo]["sizes"]["0"],
+                photos_thumb[photo]["urls"][PHOTO_THUMB_SIZE],
+                icon_size=photos_thumb[photo]["sizes"][PHOTO_THUMB_SIZE],
             )
             popup = folium.map.Popup(
-                html=f"<img src='{photos_large[photo]['urls'][size]}'>"
+                html=f"<img src='{photos_large[photo]['urls'][PHOTO_LARGE_SIZE]}'>"
             )
             folium.Marker(
                 location=photos_thumb[photo]["location"], icon=icon, popup=popup
