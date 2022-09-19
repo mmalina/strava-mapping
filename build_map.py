@@ -227,8 +227,10 @@ def main():
             marker_loc = points[len(points)//2]
         folium.Marker(location=marker_loc, popup=popup).add_to(the_map)
         marker_locations.append(marker_loc)
-        photos_thumb = get_activity_photos(access_token, activity["id"], size=PHOTO_THUMB_SIZE)
-        photos_large = get_activity_photos(access_token, activity["id"], size=PHOTO_LARGE_SIZE)
+        photos_thumb = get_activity_photos(
+            access_token, activity["id"], size=PHOTO_THUMB_SIZE)
+        photos_large = get_activity_photos(
+            access_token, activity["id"], size=PHOTO_LARGE_SIZE)
         # If we fail to get either thumbs or large photos, just skip the photos
         for photo in range(min(len(photos_thumb), len(photos_large))):
             if "location" not in photos_thumb[photo]:
