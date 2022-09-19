@@ -188,6 +188,8 @@ def main():
     the_map = folium.Map(tiles=None, control_scale=True)
     folium.TileLayer("Stamen Terrain", detect_retina=True).add_to(the_map)
     folium.TileLayer("OpenStreetMap", detect_retina=True).add_to(the_map)
+    fg = folium.FeatureGroup(name="Show Photos", show=False)
+    the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
 
@@ -231,15 +233,6 @@ def main():
         for photo in range(min(len(photos_thumb), len(photos_large))):
             if "location" not in photos_thumb[photo]:
                 continue
-            # Only add the photos checkbox once we have at least 1 photo to show.
-            # In Summer 2022 the pictures stopped having gps coordinates. This
-            # also means that the activity on Strava.com doesn't show geo-located
-            # pictures. I reported it as a bug and they acknowledged it, but
-            # that was it. Maybe they will fix it in the future.
-            if fg is None:
-                fg = folium.FeatureGroup(name="Show Photos", show=False)
-                the_map.add_child(fg)
-
             icon = folium.CustomIcon(
                 photos_thumb[photo]["urls"]["0"],
                 icon_size=photos_thumb[photo]["sizes"]["0"],
