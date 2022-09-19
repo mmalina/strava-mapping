@@ -19,9 +19,13 @@ from get_access_token import get_access_token
 
 ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 
+# Scotland Fall 2022
+SINCE = "2022-09-26"
+UNTIL = "2022-10-12"
+
 # France 2022
-SINCE = "2022-07-01"
-UNTIL = "2022-07-11"
+# SINCE = "2022-07-01"
+# UNTIL = "2022-07-11"
 
 # Scotland 2022
 # SINCE = "2022-04-14"
@@ -186,6 +190,14 @@ def main():
     folium.TileLayer("OpenStreetMap", detect_retina=True).add_to(the_map)
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
+
+    # West Highland Way, Start
+    folium.Marker(
+        location=(56.82094142369389, -5.10497358591574),
+        icon=folium.Icon(icon="bus", prefix="fa"),
+        popup="Fort William",
+    ).add_to(the_map)
+
     fg = None
     count = 0
     marker_locations = []
