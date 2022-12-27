@@ -43,7 +43,7 @@ jobs:
         STRAVA_API_CLIENT_SECRET: ${{ secrets.STRAVA_API_CLIENT_SECRET }}
         THUNDERFOREST_API_KEY: ${{ secrets.THUNDERFOREST_API_KEY }}
     - name: Archive map.html
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
           name: map.html
           path: map.html
