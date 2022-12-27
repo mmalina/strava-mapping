@@ -16,9 +16,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python 3.x
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.x
     - name: Display Python version
@@ -42,14 +42,14 @@ jobs:
         STRAVA_API_CLIENT_ID: ${{ secrets.STRAVA_API_CLIENT_ID }}
         STRAVA_API_CLIENT_SECRET: ${{ secrets.STRAVA_API_CLIENT_SECRET }}
         THUNDERFOREST_API_KEY: ${{ secrets.THUNDERFOREST_API_KEY }}
+    - name: Archive map.html
+      uses: actions/upload-artifact@v2
+      with:
+          name: map.html
+          path: map.html
     - name: Deploy map to FTP server
       run: sshpass -p "${SFTP_PASSWORD}" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null map.html "${SFTP_USERNAME}@${SFTP_HOST}:./index.html"
       env:
         SFTP_HOST: ${{ secrets.SFTP_HOST }}
         SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
         SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
-    - name: Archive map.html
-      uses: actions/upload-artifact@v2
-      with:
-          name: map.html
-          path: map.html
