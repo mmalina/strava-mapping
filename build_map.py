@@ -8,9 +8,13 @@ that can be loaded at once.
 
 The date boundaries for activities are set via SINCE/UNTIL constants
 here at the top of the script.
+
+Required env vars (either already set, or via .env file):
+THUNDERFOREST_API_KEY
 """
 from datetime import datetime
 import argparse
+import os
 
 import requests
 import folium
@@ -25,7 +29,7 @@ PHOTO_LARGE_SIZE = "400"
 
 # Scotland Fall 2022
 SINCE = "2022-09-26"
-UNTIL = "2022-10-12"
+UNTIL = "2022-10-07"
 
 # France 2022
 # SINCE = "2022-07-01"
@@ -71,7 +75,14 @@ def parse_arguments(argv=None):
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--skip-photos", action="store_true"
+        "--skip-photos",
+        action="store_true",
+        help="Skips fetching of photos for each activity. Saves 2 api calls per activity.",
+    )
+    parser.add_argument(
+        "--skip-thunderforest",
+        action="store_true",
+        help="Thunderforest tiles require an api key. This options skips this tile layer.",
     )
     args = parser.parse_args(argv)
     return args
@@ -180,7 +191,7 @@ def get_distance(loc1, loc2):
     dlon = lon2 - lon1
     dlat = lat2 - lat1
 
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     distance = R * c
 
@@ -201,6 +212,21 @@ def main():
     activities = reversed(list(get_activities(access_token)))
 
     the_map = folium.Map(tiles=None, control_scale=True)
+
+    if not args.skip_thunderforest:
+        tf_api_key = os.environ["THUNDERFOREST_API_KEY"]
+        tf_tiles = "https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey="
+        tf_tiles += tf_api_key
+        tf_attr = (
+            '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; '
+            '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        )
+        folium.TileLayer(
+            tiles=tf_tiles,
+            attr=tf_attr,
+            name="Thunderforest Outdoor",
+            detect_retina=False,
+        ).add_to(the_map)
     folium.TileLayer("Stamen Terrain", detect_retina=True).add_to(the_map)
     folium.TileLayer("OpenStreetMap", detect_retina=True).add_to(the_map)
     if not args.skip_photos:
@@ -238,14 +264,16 @@ def main():
         # of the activity is close to any previous marker, use the mid-point
         # of the activity instead.
         if any([get_distance(loc, marker_loc) < 1 for loc in marker_locations]):
-            marker_loc = points[len(points)//2]
+            marker_loc = points[len(points) // 2]
         folium.Marker(location=marker_loc, popup=popup).add_to(the_map)
         marker_locations.append(marker_loc)
         if not args.skip_photos:
             photos_thumb = get_activity_photos(
-                access_token, activity["id"], size=PHOTO_THUMB_SIZE)
+                access_token, activity["id"], size=PHOTO_THUMB_SIZE
+            )
             photos_large = get_activity_photos(
-                access_token, activity["id"], size=PHOTO_LARGE_SIZE)
+                access_token, activity["id"], size=PHOTO_LARGE_SIZE
+            )
             # If we fail to get either thumbs or large photos, just skip the photos
             for photo in range(min(len(photos_thumb), len(photos_large))):
                 if "location" not in photos_thumb[photo]:
