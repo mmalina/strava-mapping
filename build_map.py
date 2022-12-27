@@ -215,7 +215,7 @@ def main():
 
     if not args.skip_thunderforest:
         tf_api_key = os.environ["THUNDERFOREST_API_KEY"]
-        tf_tiles = "https://tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey="
+        tf_tiles = "https://tile.thunderforest.com/outdoors/{z}/{x}/{y}{r}.png?apikey="
         tf_tiles += tf_api_key
         tf_attr = (
             '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; '
