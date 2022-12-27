@@ -10,6 +10,8 @@ The date boundaries for activities are set via SINCE/UNTIL constants
 here at the top of the script.
 """
 from datetime import datetime
+import argparse
+
 import requests
 import folium
 from folium.plugins import Fullscreen
@@ -63,6 +65,16 @@ UNTIL = "2022-10-12"
 # Fuerteventura Fall 2021
 # SINCE = "2021-10-25"
 # UNTIL = "2021-11-06"
+
+
+def parse_arguments(argv=None):
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "--skip-photos", action="store_true"
+    )
+    args = parser.parse_args(argv)
+    return args
 
 
 def decode_polyline(polyline_str):
@@ -176,6 +188,7 @@ def get_distance(loc1, loc2):
 
 
 def main():
+    args = parse_arguments()
     access_token = get_access_token()
 
     # Unfortunately Strava API does not allow to specify
@@ -190,8 +203,9 @@ def main():
     the_map = folium.Map(tiles=None, control_scale=True)
     folium.TileLayer("Stamen Terrain", detect_retina=True).add_to(the_map)
     folium.TileLayer("OpenStreetMap", detect_retina=True).add_to(the_map)
-    fg = folium.FeatureGroup(name="Show Photos", show=False)
-    the_map.add_child(fg)
+    if not args.skip_photos:
+        fg = folium.FeatureGroup(name="Show Photos", show=False)
+        the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
 
@@ -227,24 +241,25 @@ def main():
             marker_loc = points[len(points)//2]
         folium.Marker(location=marker_loc, popup=popup).add_to(the_map)
         marker_locations.append(marker_loc)
-        photos_thumb = get_activity_photos(
-            access_token, activity["id"], size=PHOTO_THUMB_SIZE)
-        photos_large = get_activity_photos(
-            access_token, activity["id"], size=PHOTO_LARGE_SIZE)
-        # If we fail to get either thumbs or large photos, just skip the photos
-        for photo in range(min(len(photos_thumb), len(photos_large))):
-            if "location" not in photos_thumb[photo]:
-                continue
-            icon = folium.CustomIcon(
-                photos_thumb[photo]["urls"][PHOTO_THUMB_SIZE],
-                icon_size=photos_thumb[photo]["sizes"][PHOTO_THUMB_SIZE],
-            )
-            popup = folium.map.Popup(
-                html=f"<img src='{photos_large[photo]['urls'][PHOTO_LARGE_SIZE]}'>"
-            )
-            folium.Marker(
-                location=photos_thumb[photo]["location"], icon=icon, popup=popup
-            ).add_to(the_map).add_to(fg)
+        if not args.skip_photos:
+            photos_thumb = get_activity_photos(
+                access_token, activity["id"], size=PHOTO_THUMB_SIZE)
+            photos_large = get_activity_photos(
+                access_token, activity["id"], size=PHOTO_LARGE_SIZE)
+            # If we fail to get either thumbs or large photos, just skip the photos
+            for photo in range(min(len(photos_thumb), len(photos_large))):
+                if "location" not in photos_thumb[photo]:
+                    continue
+                icon = folium.CustomIcon(
+                    photos_thumb[photo]["urls"][PHOTO_THUMB_SIZE],
+                    icon_size=photos_thumb[photo]["sizes"][PHOTO_THUMB_SIZE],
+                )
+                popup = folium.map.Popup(
+                    html=f"<img src='{photos_large[photo]['urls'][PHOTO_LARGE_SIZE]}'>"
+                )
+                folium.Marker(
+                    location=photos_thumb[photo]["location"], icon=icon, popup=popup
+                ).add_to(the_map).add_to(fg)
         count += 1
 
     boundary = the_map.get_bounds()
