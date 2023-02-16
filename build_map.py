@@ -243,6 +243,7 @@ def main():
     # SCL Airport, Arrival
     folium.Marker(
         location=(-33.3969, -70.7936),
+        # Only FA v4 icons: https://fontawesome.com/v4/icons/
         icon=folium.Icon(icon="plane", prefix="fa"),
         popup="SCL Airport",
     ).add_to(the_map)
