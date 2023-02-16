@@ -28,8 +28,7 @@ PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
 # Chile 2023
-# SINCE = "2023-03-02"
-SINCE = "2023-02-16"
+SINCE = "2023-03-02"
 UNTIL = "2023-03-27"
 
 # Scotland Fall 2022
@@ -257,8 +256,13 @@ def main():
             continue
         points = decode_polyline(activity["map"]["summary_polyline"])
         folium.PolyLine(points, color="red").add_to(the_map)
+
+        start_date_local = datetime.fromisoformat(activity["start_date_local"][:10])
+        date_str = start_date_local.strftime("%a, %d %B %-Y")
+
         popup_text = (
-            f"<div style='width: 15em'><b>{activity['name']}</b><br><br>\n"
+            f"<div style='width: 15em'><b>{activity['name']}</b><br>\n"
+            f"{date_str}<br><br>\n"
             f"Distance: {round(activity['distance']/1000, 1)} km<br>\n"
             f"Elevation gain: {round(activity['total_elevation_gain'])} m<br><br>\n"
             f"<a href='https://www.strava.com/activities/{activity['id']}'>"
