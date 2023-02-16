@@ -27,9 +27,14 @@ ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
+# Chile 2023
+# SINCE = "2023-03-02"
+SINCE = "2023-02-16"
+UNTIL = "2023-03-27"
+
 # Scotland Fall 2022
-SINCE = "2022-09-26"
-UNTIL = "2022-10-07"
+# SINCE = "2022-09-26"
+# UNTIL = "2022-10-07"
 
 # France 2022
 # SINCE = "2022-07-01"
@@ -235,11 +240,11 @@ def main():
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
 
-    # West Highland Way, Start
+    # SCL Airport, Arrival
     folium.Marker(
-        location=(56.82094142369389, -5.10497358591574),
-        icon=folium.Icon(icon="bus", prefix="fa"),
-        popup="Fort William",
+        location=(-33.3969, -70.7936),
+        icon=folium.Icon(icon="plane", prefix="fa"),
+        popup="SCL Airport",
     ).add_to(the_map)
 
     count = 0
