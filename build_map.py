@@ -27,9 +27,13 @@ ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
+# Italy 2023
+SINCE = "2023-06-23"
+UNTIL = "2023-07-11"
+
 # Chile 2023
-SINCE = "2023-03-02"
-UNTIL = "2023-03-27"
+# SINCE = "2023-03-02"
+# UNTIL = "2023-03-27"
 
 # Scotland Fall 2022
 # SINCE = "2022-09-26"
@@ -238,14 +242,6 @@ def main():
         the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
-
-    # SCL Airport, Arrival
-    folium.Marker(
-        location=(-33.3969, -70.7936),
-        # Only FA v4 icons: https://fontawesome.com/v4/icons/
-        icon=folium.Icon(icon="plane", prefix="fa"),
-        popup="SCL Airport",
-    ).add_to(the_map)
 
     count = 0
     marker_locations = []
