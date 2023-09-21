@@ -27,9 +27,13 @@ ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
+# Chamonix to Zermatt 2023
+SINCE = "2023-09-21"
+UNTIL = "2023-10-02"
+
 # Italy 2023
-SINCE = "2023-06-23"
-UNTIL = "2023-07-11"
+# SINCE = "2023-06-23"
+# UNTIL = "2023-07-11"
 
 # Chile 2023
 # SINCE = "2023-03-02"
@@ -242,6 +246,14 @@ def main():
         the_map.add_child(fg)
     folium.LayerControl(collapsed=False).add_to(the_map)
     Fullscreen().add_to(the_map)
+
+    # Auberge de Jeunesse HI Chamonix
+    folium.Marker(
+        location=(45.9089, 6.8547),
+        # Only FA v4 icons: https://fontawesome.com/v4/icons/
+        icon=folium.Icon(icon="bed", prefix="fa"),
+        popup="Auberge de Jeunesse HI Chamonix",
+    ).add_to(the_map)
 
     count = 0
     marker_locations = []
