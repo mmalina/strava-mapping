@@ -28,7 +28,7 @@ PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
 # Chamonix to Zermatt 2023
-SINCE = "2023-09-21"
+SINCE = "2023-09-23"
 UNTIL = "2023-10-02"
 
 # Italy 2023
