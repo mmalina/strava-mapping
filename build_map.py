@@ -239,7 +239,21 @@ def main():
             name="Thunderforest Outdoor",
             detect_retina=False,
         ).add_to(the_map)
-    folium.TileLayer("Stamen Terrain", detect_retina=True).add_to(the_map)
+    st_attr = (
+        '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> '
+        '&copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> '
+        '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> '
+        '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap '
+        'contributors</a>'
+    )
+    # Domain-based free account (200k tiles per month),
+    # stats here: https://client.stadiamaps.com/dashboard/
+    folium.TileLayer(
+        tiles="https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.jpg",
+        attr=st_attr,
+        name="Stamen Terrain",
+        detect_retina=False
+    ).add_to(the_map)
     folium.TileLayer("OpenStreetMap", detect_retina=True).add_to(the_map)
     if not args.skip_photos:
         fg = folium.FeatureGroup(name="Show Photos", show=False)
