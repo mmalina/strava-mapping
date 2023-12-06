@@ -29,7 +29,7 @@ PHOTO_LARGE_SIZE = "400"
 
 # La Palma 2023
 SINCE = "2023-11-29"
-UNTIL = "2023-12-06"
+UNTIL = "2023-12-07"
 
 # Chamonix to Zermatt 2023
 # SINCE = "2023-09-23"
