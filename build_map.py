@@ -27,9 +27,13 @@ ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
+# Arizona Trail 2024
+SINCE = "2024-03-15"
+UNTIL = "2024-04-28"
+
 # La Palma 2023
-SINCE = "2023-11-29"
-UNTIL = "2023-12-07"
+# SINCE = "2023-11-29"
+# UNTIL = "2023-12-07"
 
 # Chamonix to Zermatt 2023
 # SINCE = "2023-09-23"
