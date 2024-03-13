@@ -242,6 +242,7 @@ def main():
             attr=tf_attr,
             name="Thunderforest Outdoor",
             detect_retina=False,
+            show=True,
         ).add_to(the_map)
     st_attr = (
         '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> '
