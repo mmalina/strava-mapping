@@ -15,6 +15,7 @@ THUNDERFOREST_API_KEY
 from datetime import datetime
 import argparse
 import os
+import re
 
 import requests
 import folium
@@ -281,7 +282,26 @@ def main():
 
     count = 0
     marker_locations = []
+    csv_str = "Day,Date,Name,Distance,Ascend,Total Dist.,Strava Link\n"
+    dist_total = 0
     for activity in activities:
+        if activity["type"] == "Hike":
+            date = activity["start_date_local"][0:10]
+            name = activity["name"]
+
+            pattern = r"Day (\d+)"
+            match = re.search(pattern, name)
+            if match:
+                day = match.group(1)
+            else:
+                day = "0"
+
+            dist = round(activity["distance"]/1000, 1)
+            ascend = round(activity["total_elevation_gain"])
+            dist_total = round(dist_total + dist, 1)
+            link = f"https://www.strava.com/activities/{activity['id']}"
+            csv_str += f"{day},{date},{name},{dist},{ascend},{dist_total},{link}\n"
+
         polyline_str = activity["map"]["summary_polyline"]
 
         if not polyline_str:
@@ -336,6 +356,8 @@ def main():
     the_map.fit_bounds(boundary, padding=(3, 3), max_zoom=13)
     the_map.save("map.html")
     print(f"Total activities: {count}")
+    with open("hikes.csv", "w") as file:
+        file.write(csv_str)
 
 
 if __name__ == "__main__":
