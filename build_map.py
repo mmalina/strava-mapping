@@ -28,9 +28,13 @@ ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
+# Hong Kong 2024
+SINCE = "2024-12-27"
+UNTIL = "2025-01-07"
+
 # Alps 2024
-SINCE = "2024-06-29"
-UNTIL = "2024-07-07"
+# SINCE = "2024-06-29"
+# UNTIL = "2024-07-07"
 
 # Arizona Trail 2024
 # SINCE = "2024-03-15"
