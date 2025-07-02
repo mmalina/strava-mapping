@@ -41,6 +41,7 @@ jobs:
         STRAVA_PASSWORD: ${{ secrets.STRAVA_PASSWORD }}
         STRAVA_API_CLIENT_ID: ${{ secrets.STRAVA_API_CLIENT_ID }}
         STRAVA_API_CLIENT_SECRET: ${{ secrets.STRAVA_API_CLIENT_SECRET }}
+        STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
         THUNDERFOREST_API_KEY: ${{ secrets.THUNDERFOREST_API_KEY }}
     - name: Archive map.html
       uses: actions/upload-artifact@v4

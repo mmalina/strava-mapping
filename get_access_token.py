@@ -61,6 +61,24 @@ def load_and_refresh_token():
             json.dump(values, f)
         print("Successfully loaded and refreshed token")
         return values["access_token"]
+    # STRAVA_REFRESH_TOKEN set in env
+    elif "STRAVA_REFRESH_TOKEN" in os.environ:
+        print("Using STRAVA_REFRESH_TOKEN from env")
+        data = {
+            "client_id": os.environ["STRAVA_API_CLIENT_ID"],
+            "client_secret": os.environ["STRAVA_API_CLIENT_SECRET"],
+            "grant_type": "refresh_token",
+            "refresh_token": os.environ["STRAVA_REFRESH_TOKEN"]
+        }
+        response = requests.post("https://www.strava.com/oauth/token", data=data)
+        if not response.ok:
+            print(f"Could not refresh token: {response.status_code} {response.reason}")
+            return None
+        values = response.json()
+        with open(TOKEN_JSON, "w") as f:
+            json.dump(values, f)
+        print("Successfully loaded and refreshed token from env")
+        return values["access_token"]
     return None
 
 
