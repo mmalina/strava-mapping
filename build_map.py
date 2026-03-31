@@ -19,8 +19,7 @@ import re
 
 import requests
 import folium
-from folium.plugins import Fullscreen
-from math import sin, cos, sqrt, atan2, radians
+from folium.plugins import Fullscreen, MarkerCluster
 
 from get_access_token import get_access_token
 
@@ -211,43 +210,10 @@ def get_activity_photos(access_token, activity_id, size=None):
     return response.json()
 
 
-def get_distance(loc1, loc2):
-    """Simple implentation of Haversine algorithm. It assumes earth is a sphere,
-    so not very accurate, but good enough for this use case and no need
-    to import another library (geopy.distance)
-
-    Returns: distance between two coordinates in km
-    """
-    # approximate radius of earth in km
-    R = 6373.0
-
-    lat1 = radians(loc1[0])
-    lon1 = radians(loc1[1])
-    lat2 = radians(loc2[0])
-    lon2 = radians(loc2[1])
-
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    distance = R * c
-
-    return distance
-
-
 def main():
     args = parse_arguments()
     access_token = get_access_token()
-
-    # Unfortunately Strava API does not allow to specify
-    # activities order - it's always newest to oldest.
-    # And we need oldest to newest because of avoiding
-    # markers near each other - the older activity
-    # will create the marker as usual and the newer activity
-    # will use the mid-point instead.
-    # But it's a pitty we can't use the generator properly :(
-    activities = reversed(list(get_activities(access_token)))
+    activities = get_activities(access_token)
 
     the_map = folium.Map(tiles=None, control_scale=True)
 
@@ -283,6 +249,10 @@ def main():
         show=False,
     ).add_to(the_map)
     folium.TileLayer("OpenStreetMap", detect_retina=True, show=False).add_to(the_map)
+
+    # Create marker cluster for activity markers
+    marker_cluster = MarkerCluster(name="Activities").add_to(the_map)
+
     if not args.skip_photos:
         fg = folium.FeatureGroup(name="Show Photos", show=False)
         the_map.add_child(fg)
@@ -298,7 +268,6 @@ def main():
     # ).add_to(the_map)
 
     count = 0
-    marker_locations = []
     csv_str = "Day,Date,Name,Distance,Ascend,Total Dist.,Strava Link\n"
     dist_total = 0
     for activity in activities:
@@ -338,14 +307,9 @@ def main():
             "View on Strava</a></div>"
         )
         popup = folium.map.Popup(html=popup_text)
-        marker_loc = points[-1]
-        # Avoid markers that are close to each other. If the end point
-        # of the activity is close to any previous marker, use the mid-point
-        # of the activity instead.
-        if any([get_distance(loc, marker_loc) < 1 for loc in marker_locations]):
-            marker_loc = points[len(points) // 2]
-        folium.Marker(location=marker_loc, popup=popup).add_to(the_map)
-        marker_locations.append(marker_loc)
+        # Use starting position instead of ending position
+        marker_loc = points[0]
+        folium.Marker(location=marker_loc, popup=popup).add_to(marker_cluster)
         if not args.skip_photos:
             photos_thumb = get_activity_photos(
                 access_token, activity["id"], size=PHOTO_THUMB_SIZE
