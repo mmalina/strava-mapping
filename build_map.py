@@ -293,7 +293,6 @@ def main():
         if not polyline_str:
             continue
         points = decode_polyline(activity["map"]["summary_polyline"])
-        folium.PolyLine(points, color="red").add_to(the_map)
 
         start_date_local = datetime.fromisoformat(activity["start_date_local"][:10])
         date_str = start_date_local.strftime("%a, %d %B %-Y")
@@ -306,9 +305,13 @@ def main():
             f"<a href='https://www.strava.com/activities/{activity['id']}'>"
             "View on Strava</a></div>"
         )
-        popup = folium.map.Popup(html=popup_text)
-        # Use starting position instead of ending position
+
+        # Add clickable route with popup
+        folium.PolyLine(points, color="red", weight=5, popup=popup_text).add_to(the_map)
+
+        # Use starting position for marker
         marker_loc = points[0]
+        popup = folium.map.Popup(html=popup_text)
         folium.Marker(location=marker_loc, popup=popup).add_to(marker_cluster)
         if not args.skip_photos:
             photos_thumb = get_activity_photos(
