@@ -34,6 +34,7 @@ PHOTO_LARGE_SIZE = "400"
 # Taiwan 2026
 SINCE = "2025-11-04"
 UNTIL = "2025-11-21"
+FIRST_DAY = None  # If set, this date will be Day 1 (defaults to SINCE)
 
 
 # Hong Kong 2024
@@ -133,6 +134,10 @@ def parse_arguments(argv=None):
     parser.add_argument(
         "--until",
         help="End date for activities in ISO format (YYYY-MM-DD). Defaults to UNTIL constant if set.",
+    )
+    parser.add_argument(
+        "--first-day",
+        help="Date to use as Day 1 for day number labels in ISO format (YYYY-MM-DD). Defaults to FIRST_DAY constant or since date.",
     )
     args = parser.parse_args(argv)
     return args
@@ -235,10 +240,16 @@ def main():
 
     until = args.until if args.until else UNTIL
 
+    # Determine first day for day number calculation
+    first_day = args.first_day if args.first_day else FIRST_DAY
+    if not first_day:
+        # Default to since date
+        first_day = since
+
     activities = get_activities(access_token, since=since, until=until)
 
-    # Parse since date for day number calculation (since = day 1)
-    since_date = datetime.fromisoformat(since).date()
+    # Parse first_day date for day number calculation (first_day = day 1)
+    first_day_date = datetime.fromisoformat(first_day).date()
 
     the_map = folium.Map(tiles=None, control_scale=True)
 
@@ -331,8 +342,8 @@ def main():
             continue
         points = decode_polyline(activity["map"]["summary_polyline"])
 
-        # Calculate day number relative to since date (since = day 1)
-        day_number = (start_date_local.date() - since_date).days + 1
+        # Calculate day number relative to first_day date (first_day = day 1)
+        day_number = (start_date_local.date() - first_day_date).days + 1
 
         date_str = start_date_local.strftime("%a, %d %B %-Y")
 
