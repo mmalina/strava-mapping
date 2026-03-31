@@ -289,6 +289,10 @@ def main():
     # Create marker cluster for activity markers
     marker_cluster = MarkerCluster(name="Activity pins").add_to(the_map)
 
+    # Create feature group for day labels
+    day_labels_fg = folium.FeatureGroup(name="Day labels", show=True)
+    the_map.add_child(day_labels_fg)
+
     if not args.skip_photos:
         fg = folium.FeatureGroup(name="Show Photos", show=False)
         the_map.add_child(fg)
@@ -429,7 +433,7 @@ def main():
                 white-space: nowrap;
             ">Day {day_number}</div>
         """)
-        folium.Marker(location=midpoint, icon=day_label).add_to(the_map)
+        folium.Marker(location=midpoint, icon=day_label).add_to(day_labels_fg)
 
     boundary = the_map.get_bounds()
     the_map.fit_bounds(boundary, padding=(3, 3), max_zoom=13)
