@@ -28,9 +28,14 @@ ACTIVITIES_ENDPOINT = "https://www.strava.com/api/v3/athlete/activities"
 PHOTO_THUMB_SIZE = "64"
 PHOTO_LARGE_SIZE = "400"
 
-# Hong Kong 2024
-SINCE = "2025-07-05"
-UNTIL = "2025-07-21"
+# South Africa 2026
+# SINCE = "2026-03-03"
+# UNTIL = "2026-03-25"
+
+# Taiwan 2026
+SINCE = "2025-11-04"
+UNTIL = "2025-11-21"
+
 
 # Hong Kong 2024
 # SINCE = "2024-12-27"
