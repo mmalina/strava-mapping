@@ -12,7 +12,7 @@ here at the top of the script.
 Required env vars (either already set, or via .env file):
 THUNDERFOREST_API_KEY
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 import argparse
 import os
 import re
@@ -121,6 +121,19 @@ def parse_arguments(argv=None):
         action="store_true",
         help="Thunderforest tiles require an api key. This options skips this tile layer.",
     )
+    parser.add_argument(
+        "-o", "--output",
+        default="map.html",
+        help="Output file path (default: map.html)",
+    )
+    parser.add_argument(
+        "--since",
+        help="Start date for activities in ISO format (YYYY-MM-DD). Defaults to SINCE constant or 1 month ago.",
+    )
+    parser.add_argument(
+        "--until",
+        help="End date for activities in ISO format (YYYY-MM-DD). Defaults to UNTIL constant if set.",
+    )
     args = parser.parse_args(argv)
     return args
 
@@ -162,13 +175,13 @@ def decode_polyline(polyline_str):
     return coordinates
 
 
-def get_activities(access_token):
+def get_activities(access_token, since=None, until=None):
     headers = {"Authorization": f"Bearer {access_token}"}
     payload = {"per_page": 20}
-    if SINCE:
-        payload["after"] = datetime.fromisoformat(SINCE).timestamp()
-    if UNTIL:
-        payload["before"] = datetime.fromisoformat(UNTIL).timestamp()
+    if since:
+        payload["after"] = datetime.fromisoformat(since).timestamp()
+    if until:
+        payload["before"] = datetime.fromisoformat(until).timestamp()
     payload["page"] = 1
     while True:
         response = requests.get(
@@ -213,10 +226,19 @@ def get_activity_photos(access_token, activity_id, size=None):
 def main():
     args = parse_arguments()
     access_token = get_access_token()
-    activities = get_activities(access_token)
 
-    # Parse SINCE date for day number calculation (SINCE = day 1)
-    since_date = datetime.fromisoformat(SINCE).date() if SINCE else None
+    # Determine date range: CLI args override constants, default since to 1 month ago
+    since = args.since if args.since else SINCE
+    if not since:
+        # Default to 1 month ago
+        since = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+
+    until = args.until if args.until else UNTIL
+
+    activities = get_activities(access_token, since=since, until=until)
+
+    # Parse since date for day number calculation (since = day 1)
+    since_date = datetime.fromisoformat(since).date()
 
     the_map = folium.Map(tiles=None, control_scale=True)
 
@@ -309,11 +331,8 @@ def main():
             continue
         points = decode_polyline(activity["map"]["summary_polyline"])
 
-        # Calculate day number relative to SINCE date (SINCE = day 1)
-        if since_date:
-            day_number = (start_date_local.date() - since_date).days + 1
-        else:
-            day_number = 1
+        # Calculate day number relative to since date (since = day 1)
+        day_number = (start_date_local.date() - since_date).days + 1
 
         date_str = start_date_local.strftime("%a, %d %B %-Y")
 
@@ -403,8 +422,9 @@ def main():
 
     boundary = the_map.get_bounds()
     the_map.fit_bounds(boundary, padding=(3, 3), max_zoom=13)
-    the_map.save("map.html")
+    the_map.save(args.output)
     print(f"Total activities: {activity_count}")
+    print(f"Map saved to: {args.output}")
     with open("hikes.csv", "w") as file:
         file.write(csv_str)
 
