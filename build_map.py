@@ -276,7 +276,7 @@ def main():
     folium.TileLayer("OpenStreetMap", detect_retina=True, show=False).add_to(the_map)
 
     # Create marker cluster for activity markers
-    marker_cluster = MarkerCluster(name="Activities").add_to(the_map)
+    marker_cluster = MarkerCluster(name="Activity pins").add_to(the_map)
 
     if not args.skip_photos:
         fg = folium.FeatureGroup(name="Show Photos", show=False)
