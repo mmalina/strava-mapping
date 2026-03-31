@@ -215,6 +215,9 @@ def main():
     access_token = get_access_token()
     activities = get_activities(access_token)
 
+    # Parse SINCE date for day number calculation (SINCE = day 1)
+    since_date = datetime.fromisoformat(SINCE).date() if SINCE else None
+
     the_map = folium.Map(tiles=None, control_scale=True)
 
     if not args.skip_thunderforest:
@@ -267,10 +270,22 @@ def main():
     #     popup="Auberge de Jeunesse HI Chamonix",
     # ).add_to(the_map)
 
-    count = 0
     csv_str = "Day,Date,Name,Distance,Ascend,Total Dist.,Strava Link\n"
     dist_total = 0
+    activity_count = 0
+
+    # Track longest activity per day for label placement
+    longest_per_day = {}
+
+    # Color scheme - alternating red and blue by day
+    colors = {
+        0: "#E63946",  # Red for odd days (1, 3, 5...)
+        1: "#1E88E5",  # Blue for even days (2, 4, 6...)
+    }
+
     for activity in activities:
+        start_date_local = datetime.fromisoformat(activity["start_date_local"][:10])
+
         if activity["type"] == "Hike":
             date = activity["start_date_local"][0:10]
             name = activity["name"]
@@ -294,8 +309,16 @@ def main():
             continue
         points = decode_polyline(activity["map"]["summary_polyline"])
 
-        start_date_local = datetime.fromisoformat(activity["start_date_local"][:10])
+        # Calculate day number relative to SINCE date (SINCE = day 1)
+        if since_date:
+            day_number = (start_date_local.date() - since_date).days + 1
+        else:
+            day_number = 1
+
         date_str = start_date_local.strftime("%a, %d %B %-Y")
+
+        # Get alternating color based on day number
+        route_color = colors[(day_number - 1) % 2]
 
         popup_text = (
             f"<div style='width: 15em'><b>{activity['name']}</b><br>\n"
@@ -306,13 +329,39 @@ def main():
             "View on Strava</a></div>"
         )
 
-        # Add clickable route with popup
-        folium.PolyLine(points, color="red", weight=5, popup=popup_text).add_to(the_map)
+        # Add clickable route with alternating color
+        folium.PolyLine(points, color=route_color, weight=5, popup=popup_text).add_to(the_map)
 
-        # Use starting position for marker
+        # Track longest activity per day for label placement
+        if day_number not in longest_per_day or activity['distance'] > longest_per_day[day_number]['distance']:
+            longest_per_day[day_number] = {
+                'distance': activity['distance'],
+                'points': points,
+                'color': route_color
+            }
+
+        # Determine activity type icon
+        activity_type = activity.get('type', 'Other')
+        if activity_type == 'Hike':
+            icon_name = 'hiking'
+        elif activity_type == 'Run':
+            icon_name = 'running'
+        elif activity_type in ['Ride', 'VirtualRide']:
+            icon_name = 'bicycle'
+        elif activity_type == 'Walk':
+            icon_name = 'walking'
+        else:
+            icon_name = 'circle'
+
+        # Use alternating icon color to match route
+        icon_color = 'red' if (day_number - 1) % 2 == 0 else 'blue'
+
+        # Use starting position for marker with activity type icon
         marker_loc = points[0]
         popup = folium.map.Popup(html=popup_text)
-        folium.Marker(location=marker_loc, popup=popup).add_to(marker_cluster)
+        icon = folium.Icon(icon=icon_name, prefix='fa', color=icon_color)
+        folium.Marker(location=marker_loc, icon=icon, popup=popup).add_to(marker_cluster)
+        activity_count += 1
         if not args.skip_photos:
             photos_thumb = get_activity_photos(
                 access_token, activity["id"], size=PHOTO_THUMB_SIZE
@@ -334,12 +383,28 @@ def main():
                 folium.Marker(
                     location=photos_thumb[photo]["location"], icon=icon, popup=popup
                 ).add_to(the_map).add_to(fg)
-        count += 1
+
+    # Add "Day X" labels at midpoint of longest activity for each day
+    for day_number, day_data in longest_per_day.items():
+        points = day_data['points']
+        midpoint = points[len(points) // 2]
+        label_color = day_data['color']
+
+        day_label = folium.DivIcon(html=f"""
+            <div style="
+                color: {label_color};
+                font-weight: bold;
+                font-size: 18px;
+                text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white;
+                white-space: nowrap;
+            ">Day {day_number}</div>
+        """)
+        folium.Marker(location=midpoint, icon=day_label).add_to(the_map)
 
     boundary = the_map.get_bounds()
     the_map.fit_bounds(boundary, padding=(3, 3), max_zoom=13)
     the_map.save("map.html")
-    print(f"Total activities: {count}")
+    print(f"Total activities: {activity_count}")
     with open("hikes.csv", "w") as file:
         file.write(csv_str)
 
