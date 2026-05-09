@@ -31,11 +31,15 @@ PHOTO_LARGE_SIZE = "400"
 # SINCE = "2026-03-03"
 # UNTIL = "2026-03-25"
 
-# Taiwan 2026
-SINCE = "2026-04-24"
-UNTIL = "2026-05-07"
+# Japan 2026
+SINCE = "2026-05-08"
+UNTIL = "2026-05-26"
 FIRST_DAY = None  # If set, this date will be Day 1 (defaults to SINCE)
 
+# Taiwan 2026
+# SINCE = "2026-04-24"
+# UNTIL = "2026-05-07"
+# FIRST_DAY = None  # If set, this date will be Day 1 (defaults to SINCE)
 
 # Hong Kong 2024
 # SINCE = "2024-12-27"
