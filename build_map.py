@@ -32,9 +32,9 @@ PHOTO_LARGE_SIZE = "400"
 # UNTIL = "2026-03-25"
 
 # Alps 2026
-SINCE = "2026-06-27"
+SINCE = "2026-06-28"
 UNTIL = "2026-07-20"
-FIRST_DAY = "2026-06-28"  # If set, this date will be Day 1 (defaults to SINCE)
+FIRST_DAY = None  # If set, this date will be Day 1 (defaults to SINCE)
 
 # Japan 2026
 # SINCE = "2026-05-08"
